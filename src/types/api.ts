@@ -47,6 +47,9 @@ export interface PublicRoom {
   state: string;
   chart: { name: string; id: string };
   players: { name: string; id: number }[];
+  /** 房间人数上限。官方 tphira-mp 的 /room 不含此字段，为可选；
+   *  自建服务端会附带返回，取不到时不要伪造默认值。 */
+  max_users?: number;
 }
 
 export interface UserInfo {

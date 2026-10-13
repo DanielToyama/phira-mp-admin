@@ -15,6 +15,8 @@ export interface RoomUpdateMessage {
     locked: boolean;
     cycle: boolean;
     live: boolean;
+    /** 房间人数上限。自建服务端会返回；官方格式没有此字段。 */
+    max_users?: number;
     chart: {
       name: string;
       id: number;

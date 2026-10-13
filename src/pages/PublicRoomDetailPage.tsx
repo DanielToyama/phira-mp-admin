@@ -133,7 +133,7 @@ export function PublicRoomDetailPage() {
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                   <div className="p-3 bg-muted rounded-lg">
                     <div className="text-sm text-muted-foreground">最大人数</div>
-                    <div className="text-lg font-semibold">{room.max_users}</div>
+                    <div className="text-lg font-semibold">{room.max_users ?? '-'}</div>
                   </div>
                   <div className="p-3 bg-muted rounded-lg">
                     <div className="text-sm text-muted-foreground">当前玩家</div>

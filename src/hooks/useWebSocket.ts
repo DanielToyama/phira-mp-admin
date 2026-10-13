@@ -92,7 +92,7 @@ export function useWebSocket({ roomId, userId, enableAdmin }: UseWebSocketOption
         // 将 WebSocket 数据转换为 Room 类型
         const updatedRoom: Room = {
           roomid: roomMessage.data.roomid,
-          max_users: 8, // 默认值
+          max_users: roomMessage.data.max_users ?? 8, // 服务端未返回时才回退
           live: roomMessage.data.live,
           locked: roomMessage.data.locked,
           cycle: roomMessage.data.cycle,

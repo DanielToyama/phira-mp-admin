@@ -63,7 +63,7 @@ export function usePublicRoom(roomId: string | undefined, options: UsePublicRoom
       if (foundRoom) {
         const extendedRoom: ExtendedPublicRoom = {
           ...foundRoom,
-          max_users: 8,
+          max_users: foundRoom.max_users,
           current_users: foundRoom.players?.length || 0,
           monitors: 0,
         };
@@ -148,7 +148,7 @@ export function usePublicRoom(roomId: string | undefined, options: UsePublicRoom
                 state: message.data.state || 'waiting',
                 chart: message.data.chart || { id: '0', name: '未选择' },
                 players: playersWithReady.map((p: Player) => ({ name: p.name, id: p.id })),
-                max_users: 8,
+                max_users: message.data.max_users,
                 current_users: message.data.users?.length || 0,
                 monitors: message.data.monitors?.length || 0,
                 ready_count: readyCount,

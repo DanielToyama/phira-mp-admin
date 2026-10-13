@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import {
@@ -30,7 +31,8 @@ import {
   LogOut,
   User,
   Upload,
-  Settings
+  Settings,
+  CircleAlert
 } from 'lucide-react';
 import { apiService } from '@/services/api';
 import { phiraApiService } from '@/services/phiraApi';
@@ -340,6 +342,20 @@ export function ReplayPanel() {
           <CardTitle className="flex items-center gap-2">
             <Film className="h-5 w-5" />
             谱面回放
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button
+                  type="button"
+                  aria-label="回放文件说明"
+                  className="inline-flex items-center justify-center rounded-full text-muted-foreground transition-colors hover:text-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                >
+                  <CircleAlert className="h-4 w-4" />
+                </button>
+              </TooltipTrigger>
+              <TooltipContent side="top" className="max-w-[260px] text-center">
+                下载的文件可使用Phira Pro等支持phirarec的客户端访问！
+              </TooltipContent>
+            </Tooltip>
           </CardTitle>
           <CardDescription>查看和下载用户的游戏回放记录</CardDescription>
         </CardHeader>
