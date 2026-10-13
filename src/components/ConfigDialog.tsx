@@ -34,6 +34,7 @@ import {
   History
 } from 'lucide-react';
 import { apiService } from '@/services/api';
+import { DEFAULT_API_BASE_URL } from '@/lib/branding';
 import { toast } from 'sonner';
 
 // API 配置项接口
@@ -511,7 +512,7 @@ export function ConfigDialog({ onConfigChange, children, defaultOpen, onOpenChan
             <div className="relative">
               <Input
                 id="baseUrl"
-                placeholder={isHttpsPage ? "https://example.com:12347 或 http://127.0.0.1:12347" : "http://127.0.0.1:12347"}
+                placeholder={DEFAULT_API_BASE_URL}
                 value={baseUrl}
                 onChange={(e) => setBaseUrl(e.target.value)}
               />
@@ -522,7 +523,7 @@ export function ConfigDialog({ onConfigChange, children, defaultOpen, onOpenChan
               )}
             </div>
             <p className="text-xs text-muted-foreground">
-              {isHttpsPage ? '例如: https://api.example.com:12347 或 http://127.0.0.1:12347' : '例如: http://127.0.0.1:12347'}
+              {`例如: ${DEFAULT_API_BASE_URL} 或 http://127.0.0.1:12347`}
             </p>
             {baseUrl && !isCheckingUrl && (
               <p className={`text-xs ${isUrlValid && checkUrlSecurity(baseUrl).valid ? 'text-green-600' : 'text-red-600'}`}>

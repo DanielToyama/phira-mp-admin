@@ -1,8 +1,12 @@
 {
-  "name": "mp-admin",
+  "name": "hushantutu-phira-panel",
   "private": true,
   "version": "1.6.2",
+  "description": "户山兔兔的 Phira 多人联机服务器面板（基于 mp-admin 魔改，粉色主题）",
   "type": "module",
+  "engines": {
+    "node": ">=20.19.0"
+  },
   "scripts": {
     "dev": "vite",
     "build": "node scripts/generate-changelog.js && tsc -b && vite build",

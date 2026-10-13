@@ -10,7 +10,7 @@ export function PlayerLayout() {
   const location = useLocation();
 
   return (
-    <div className="space-y-4 animate-fade-in">
+    <div className="flex flex-1 flex-col space-y-4 animate-fade-in">
       <nav className="border-b bg-card/50 -mx-4 px-4 md:-mx-0 md:px-0 md:rounded-lg md:border md:bg-card md:py-1">
         <div className="flex gap-1 overflow-x-auto py-2 md:py-0">
           {playerSubTabs.map((tab) => {

@@ -334,8 +334,8 @@ export function ReplayPanel() {
   };
 
   return (
-    <div className="space-y-4 animate-fade-in">
-      <Card>
+    <div className="flex flex-1 flex-col space-y-4 animate-fade-in">
+      <Card className="flex flex-1 flex-col">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Film className="h-5 w-5" />
@@ -343,7 +343,7 @@ export function ReplayPanel() {
           </CardTitle>
           <CardDescription>查看和下载用户的游戏回放记录</CardDescription>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="flex flex-1 flex-col space-y-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <User className="h-4 w-4" />

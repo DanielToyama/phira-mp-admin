@@ -194,7 +194,7 @@ export function RoomQueryPanel() {
   const playingCount = rooms.filter((room) => room.state === 'playing').length;
 
   return (
-    <div className="animate-fade-in space-y-4">
+    <div className="flex flex-1 flex-col space-y-4 animate-fade-in">
       {rooms.length > 0 && (
         <StatTiles
           tiles={[
@@ -205,7 +205,7 @@ export function RoomQueryPanel() {
           className="sm:grid-cols-3"
         />
       )}
-      <Card>
+      <Card className="flex flex-1 flex-col">
         <CardHeader>
           <CardTitle className="grid gap-3 md:grid-cols-[minmax(0,1fr)_minmax(320px,520px)_auto] md:items-center">
             <div className="flex items-center gap-2">
@@ -268,9 +268,11 @@ export function RoomQueryPanel() {
           </CardDescription>
         </CardHeader>
 
-        <CardContent>
+        <CardContent className="flex flex-1 flex-col">
           {rooms.length === 0 ? (
-            <div className="py-8 text-center text-muted-foreground">暂无房间数据，点击刷新获取</div>
+            <div className="flex flex-1 items-center justify-center py-8 text-center text-muted-foreground">
+              暂无房间数据，点击刷新获取
+            </div>
           ) : filteredRooms.length === 0 ? (
             <div className="py-8 text-center text-muted-foreground">
               没有找到匹配的房间，可尝试搜索房间ID、玩家名字或谱面信息

@@ -4,64 +4,66 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 240 10% 3.9%;
+    /* 户山兔兔 · 粉色主题（浅色） */
+    --background: 348 100% 98%;
+    --foreground: 0 0% 20%;
     --card: 0 0% 100%;
-    --card-foreground: 240 10% 3.9%;
+    --card-foreground: 0 0% 20%;
     --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 3.9%;
-    --primary: 240 5.9% 10%;
-    --primary-foreground: 0 0% 98%;
-    --secondary: 240 4.8% 95.9%;
-    --secondary-foreground: 240 5.9% 10%;
-    --muted: 240 4.8% 95.9%;
-    --muted-foreground: 240 3.8% 46.1%;
-    --accent: 240 4.8% 95.9%;
-    --accent-foreground: 240 5.9% 10%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 240 5.9% 90%;
-    --input: 240 5.9% 90%;
-    --ring: 240 5.9% 10%;
-    --radius: 0.625rem;
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 240 5.9% 10%;
-    --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 240 4.8% 95.9%;
-    --sidebar-accent-foreground: 240 5.9% 10%;
-    --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --popover-foreground: 0 0% 20%;
+    --primary: 343 100% 71%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 344 100% 97%;
+    --secondary-foreground: 343 45% 32%;
+    --muted: 346 100% 96.7%;
+    --muted-foreground: 340 14% 46%;
+    --accent: 344 100% 96%;
+    --accent-foreground: 343 55% 30%;
+    --destructive: 4 90% 58%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 344 100% 92.5%;
+    --input: 344 100% 92.5%;
+    --ring: 343 100% 71%;
+    --radius: 0.75rem;
+    --sidebar-background: 348 100% 98.5%;
+    --sidebar-foreground: 343 30% 25%;
+    --sidebar-primary: 343 100% 71%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 344 100% 96%;
+    --sidebar-accent-foreground: 343 55% 30%;
+    --sidebar-border: 344 100% 92.5%;
+    --sidebar-ring: 343 100% 71%;
   }
 
   .dark {
-    --background: 240 10% 3.9%;
-    --foreground: 0 0% 98%;
-    --card: 240 10% 3.9%;
-    --card-foreground: 0 0% 98%;
-    --popover: 240 10% 3.9%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 0 0% 98%;
-    --primary-foreground: 240 5.9% 10%;
-    --secondary: 240 3.7% 15.9%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 240 3.7% 15.9%;
-    --muted-foreground: 240 5% 64.9%;
-    --accent: 240 3.7% 15.9%;
-    --accent-foreground: 0 0% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 240 3.7% 15.9%;
-    --input: 240 3.7% 15.9%;
-    --ring: 240 4.9% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    /* 户山兔兔 · 粉色主题（深色） */
+    --background: 337 17% 9%;
+    --foreground: 340 30% 95%;
+    --card: 338 19% 12%;
+    --card-foreground: 340 30% 95%;
+    --popover: 338 19% 12%;
+    --popover-foreground: 340 30% 95%;
+    --primary: 341 100% 78%;
+    --primary-foreground: 337 40% 10%;
+    --secondary: 333 18% 19%;
+    --secondary-foreground: 340 30% 95%;
+    --muted: 333 18% 17%;
+    --muted-foreground: 340 14% 68%;
+    --accent: 333 18% 19%;
+    --accent-foreground: 340 30% 95%;
+    --destructive: 4 70% 52%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 333 18% 23%;
+    --input: 333 18% 23%;
+    --ring: 341 100% 78%;
+    --sidebar-background: 337 17% 11%;
+    --sidebar-foreground: 340 25% 92%;
+    --sidebar-primary: 341 100% 78%;
+    --sidebar-primary-foreground: 337 40% 10%;
+    --sidebar-accent: 333 18% 19%;
+    --sidebar-accent-foreground: 340 30% 95%;
+    --sidebar-border: 333 18% 23%;
+    --sidebar-ring: 341 100% 78%;
   }
 }
 
@@ -72,6 +74,42 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+/* ===== 户山兔兔 品牌样式 ===== */
+
+/* 页面渐变背景（与 iphira.danieluu.top 一致） */
+.app-gradient-bg {
+  background: linear-gradient(135deg, hsl(348 100% 98%) 0%, hsl(346 100% 96.7%) 100%);
+}
+.dark .app-gradient-bg {
+  background: linear-gradient(135deg, hsl(337 17% 9%) 0%, hsl(336 20% 12%) 100%);
+}
+
+/* 顶部品牌渐变描边 */
+.brand-topline {
+  background: linear-gradient(90deg, hsl(342 100% 85%) 0%, hsl(343 100% 68%) 50%, hsl(336 100% 79%) 100%);
+}
+
+/* 品牌 Logo 方块渐变 */
+.brand-logo {
+  background: linear-gradient(135deg, hsl(342 100% 80%) 0%, hsl(343 100% 68%) 100%);
+}
+
+/* 主按钮渐变（对应原站 button 的粉色渐变） */
+.brand-btn-gradient {
+  background: linear-gradient(to right, hsl(343 100% 78%), hsl(343 100% 68%));
+  color: hsl(0 0% 100%);
+  border: none;
+}
+.brand-btn-gradient:hover {
+  filter: brightness(1.05);
+  box-shadow: 0 6px 18px hsl(343 100% 68% / 0.45);
+}
+
+/* 卡片柔和粉色阴影 */
+.card-soft {
+  box-shadow: 0 4px 15px hsl(343 100% 68% / 0.12);
 }
 
 /* Custom Animations */
@@ -169,7 +207,7 @@ input, textarea {
 .hdr-scan {
   overflow: hidden;
   background: rgba(0, 255, 136, 0.1);
-  box-shadow: 0 0 30px rgba(133 77 14 0.5);
+  box-shadow: 0 0 30px rgba(133 77 14, 0.5);
 }
 
 .hdr-scan::before {

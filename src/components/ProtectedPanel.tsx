@@ -211,7 +211,7 @@ export function ProtectedPanel({ children, onAuthSuccess }: ProtectedPanelProps)
   }
 
   return (
-    <div className="animate-fade-in">
+    <div className="flex flex-1 flex-col animate-fade-in">
       {children}
     </div>
   );

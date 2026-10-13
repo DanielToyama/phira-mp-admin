@@ -707,12 +707,12 @@ export function AdminApiPanel() {
   ];
 
   return (
-    <div className="flex flex-col gap-6 animate-fade-in lg:flex-row">
+    <div className="flex flex-1 flex-col gap-6 animate-fade-in lg:flex-row">
       <AdminSidebar activeTab={activeTab} onSelect={(value) => navigate(`/admin/${value}`)} />
 
-      <div className="min-w-0 flex-1 animate-slide-in">
+      <div className="flex min-w-0 flex-1 flex-col animate-slide-in">
         {activeTab === 'rooms' && (
-          <div className="space-y-4">
+          <div className="flex flex-1 flex-col space-y-4">
             <StatTiles
               tiles={[
                 { label: '总房间', value: rooms.length, icon: LayoutGrid },
@@ -721,7 +721,7 @@ export function AdminApiPanel() {
                 { label: '在线玩家', value: totalPlayers, icon: Users },
               ]}
             />
-            <Card>
+            <Card className="flex flex-1 flex-col">
               <CardHeader className="space-y-3">
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <CardTitle className="flex items-center gap-2">
@@ -934,8 +934,8 @@ export function AdminApiPanel() {
           )}
 
           {activeTab === 'users' && (
-          <div className="space-y-4">
-            <Card>
+          <div className="flex flex-1 flex-col space-y-4">
+            <Card className="flex flex-1 flex-col">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Users className="h-5 w-5" />
@@ -1039,8 +1039,8 @@ export function AdminApiPanel() {
         )}
 
         {activeTab === 'messages' && (
-          <div className="space-y-4">
-            <Card>
+          <div className="flex flex-1 flex-col space-y-4">
+            <Card className="flex flex-1 flex-col">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Volume2 className="h-5 w-5" />
@@ -1110,7 +1110,7 @@ export function AdminApiPanel() {
         )}
 
         {activeTab === 'settings' && (
-          <Card>
+          <Card className="flex flex-1 flex-col">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Settings className="h-5 w-5" />
@@ -1148,8 +1148,8 @@ export function AdminApiPanel() {
         )}
 
         {activeTab === 'contest' && (
-          <div className="space-y-4">
-            <Card>
+          <div className="flex flex-1 flex-col space-y-4">
+            <Card className="flex flex-1 flex-col">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Trophy className="h-5 w-5" />

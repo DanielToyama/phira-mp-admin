@@ -49,6 +49,7 @@ import { apiService } from '@/services/api';
 import { phiraApiService } from '@/services/phiraApi';
 import { useOtpAuth } from '@/hooks/useOtpAuth';
 import { setLastMode, type AppMode } from '@/lib/app-mode';
+import { BRAND, DEFAULT_API_BASE_URL } from '@/lib/branding';
 import { toast } from 'sonner';
 import type { OtpMode } from '@/types/api';
 
@@ -131,7 +132,10 @@ export function ModeSelectPage() {
   const otpAuth = useOtpAuth();
 
   useEffect(() => {
-    document.title = '初始化 - Phira API 管理面板';
+    document.title = `初始化 - ${BRAND.pageTitle}`;
+    return () => {
+      document.title = BRAND.pageTitle;
+    };
   }, []);
 
   // URL 安全策略检查
@@ -397,16 +401,16 @@ export function ModeSelectPage() {
 
   // ============= 渲染 =============
   return (
-    <div className="flex min-h-[calc(100vh-220px)] items-start justify-center px-4 py-8">
+    <div className="flex min-h-[calc(100vh-220px)] flex-1 items-start justify-center px-4 py-8">
       <div className="w-full max-w-2xl space-y-6 animate-fade-in">
         <div className="space-y-3 text-center">
           <div className="inline-flex items-center gap-2 rounded-full border bg-card px-3 py-1 text-xs text-muted-foreground">
             <Sparkles className="h-3 w-3" />
             初始化向导
           </div>
-          <h2 className="text-3xl font-bold tracking-tight">欢迎使用 Phira MP</h2>
+          <h2 className="text-3xl font-bold tracking-tight">欢迎使用 {BRAND.name}</h2>
           <p className="text-sm text-muted-foreground">
-            按步骤完成配置，几秒钟即可开始使用
+            按步骤完成配置，几秒钟即可开始使用 · 联机地址 {BRAND.joinAddress}
           </p>
         </div>
 
@@ -520,7 +524,7 @@ export function ModeSelectPage() {
                 <div className="relative">
                   <Input
                     id="baseUrl"
-                    placeholder={isHttpsPage ? 'https://example.com:12347' : 'http://127.0.0.1:12347'}
+                    placeholder={DEFAULT_API_BASE_URL}
                     value={baseUrl}
                     onChange={e => setBaseUrl(e.target.value)}
                     className="pr-10"
@@ -590,8 +594,8 @@ export function ModeSelectPage() {
                   description="查询公开房间、查看回放记录"
                   features={['浏览公开房间', '查看回放记录', '上传回放至分享站']}
                   onSelect={() => handleSelectMode('player')}
-                  accent="border-blue-500/30 hover:border-blue-500/60 bg-gradient-to-br from-blue-500/5 to-transparent"
-                  iconClass="bg-blue-500/10 text-blue-500"
+                  accent="border-rose-400/40 hover:border-rose-400/70 bg-gradient-to-br from-rose-400/5 to-transparent"
+                  iconClass="bg-rose-400/10 text-rose-400"
                 />
                 <ModeCard
                   icon={<Shield className="h-7 w-7" />}
@@ -599,8 +603,8 @@ export function ModeSelectPage() {
                   description="管理房间、用户、广播与比赛"
                   features={['解散/查询所有房间', '封禁/解封玩家', '广播消息与功能开关']}
                   onSelect={() => handleSelectMode('admin')}
-                  accent="border-amber-500/30 hover:border-amber-500/60 bg-gradient-to-br from-amber-500/5 to-transparent"
-                  iconClass="bg-amber-500/10 text-amber-500"
+                  accent="border-fuchsia-500/30 hover:border-fuchsia-500/60 bg-gradient-to-br from-fuchsia-500/5 to-transparent"
+                  iconClass="bg-fuchsia-500/10 text-fuchsia-500"
                   badge="需 TOKEN"
                 />
               </div>

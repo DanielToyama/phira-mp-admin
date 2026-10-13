@@ -1,7 +1,52 @@
 {
-  "generatedAt": "2026-05-07T00:34:09.110Z",
-  "totalCommits": 89,
+  "generatedAt": "2026-10-13T06:05:20.885Z",
+  "totalCommits": 94,
   "commits": [
+    {
+      "hash": "df1b2af",
+      "date": "2026-06-07 23:03:31 +0800",
+      "message": "feat: 优化Cookie同意弹窗的样式和交互，增加可见性和指针事件控制",
+      "type": "feat",
+      "typeLabel": "新功能",
+      "content": "优化Cookie同意弹窗的样式和交互，增加可见性和指针事件控制",
+      "author": "Pimeng"
+    },
+    {
+      "hash": "8ac7e41",
+      "date": "2026-06-02 06:00:24 +0800",
+      "message": "feat: 添加管理员侧边栏和统计信息组件，优化房间查询面板",
+      "type": "feat",
+      "typeLabel": "新功能",
+      "content": "添加管理员侧边栏和统计信息组件，优化房间查询面板",
+      "author": "Pimeng"
+    },
+    {
+      "hash": "0db5175",
+      "date": "2026-05-17 02:07:10 +0800",
+      "message": "feat: 支持从查询参数获取API URL，优化模式选择逻辑",
+      "type": "feat",
+      "typeLabel": "新功能",
+      "content": "支持从查询参数获取API URL，优化模式选择逻辑",
+      "author": "Pimeng"
+    },
+    {
+      "hash": "3a7f23a",
+      "date": "2026-05-12 00:48:03 +0800",
+      "message": "feat: 更新Cookie选择弹窗",
+      "type": "feat",
+      "typeLabel": "新功能",
+      "content": "更新Cookie选择弹窗",
+      "author": "Pimeng"
+    },
+    {
+      "hash": "d8a9a2c",
+      "date": "2026-05-07 08:34:33 +0800",
+      "message": "fix: 未使用的函数",
+      "type": "fix",
+      "typeLabel": "修复",
+      "content": "未使用的函数",
+      "author": "Pimeng"
+    },
     {
       "hash": "a1518d3",
       "date": "2026-05-06 19:29:13 +0800",

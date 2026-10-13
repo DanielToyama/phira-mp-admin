@@ -132,7 +132,8 @@ function getGitCommits(): GitCommit[] {
 
 // https://vite.dev/config/
 export default defineConfig({
-  base: '/',
+  // 使用相对路径，dist 可放在任意目录/子路径下静态托管
+  base: './',
   plugins: [inspectAttr(), react()],
   define: {
     __GIT_COMMIT_HASH__: JSON.stringify(getGitCommitHash()),

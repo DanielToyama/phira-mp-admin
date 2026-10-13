@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { BrowserRouter, Navigate, Outlet, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
+import { HashRouter, Navigate, Outlet, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import { Toaster } from '@/components/ui/sonner';
 import { Button } from '@/components/ui/button';
 import {
@@ -26,11 +26,12 @@ import { applyApiConfig } from '@/hooks/useApiConfig';
 import { useUrlConfig } from '@/hooks/useUrlConfig';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { ChangelogDialog } from '@/components/ChangelogDialog';
-import BrutalCookieConsent from '@/components/BrutalCookieConsent';
+import { BRAND } from '@/lib/branding';
 import { version } from '../package.json';
 import {
   Code2,
   Gamepad2,
+  Heart,
   Loader2,
   Menu,
   Server,
@@ -93,8 +94,9 @@ function MainLayout() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="flex min-h-screen flex-col bg-background app-gradient-bg">
       <header className="sticky top-0 z-50 border-b bg-card animate-fade-in">
+        <div className="brand-topline h-1 w-full" />
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between gap-4">
             <button
@@ -103,12 +105,12 @@ function MainLayout() {
               onClick={() => navigate('/select')}
               title="返回模式选择页"
             >
-              <div className="rounded-lg bg-primary p-2 transition-transform hover:scale-105">
+              <div className="brand-logo rounded-lg p-2 transition-transform hover:scale-105">
                 <Server className="h-6 w-6 text-primary-foreground" />
               </div>
               <div>
-                <h1 className="text-xl font-bold">Phira MP</h1>
-                <p className="text-sm text-muted-foreground">多人联机面板</p>
+                <h1 className="text-xl font-bold">{BRAND.name}</h1>
+                <p className="text-sm text-muted-foreground">{BRAND.subtitle}</p>
               </div>
             </button>
 
@@ -177,27 +179,50 @@ function MainLayout() {
         </div>
       </header>
 
-      <main className="container mx-auto px-4 py-6">
-        <div key={configKey} className="animate-slide-in">
+      <main className="container mx-auto flex w-full flex-1 flex-col px-4 py-6">
+        <div key={configKey} className="flex flex-1 flex-col animate-slide-in">
           <Outlet />
         </div>
       </main>
 
-      <footer className="mt-8 border-t animate-fade-in" style={{ animationDelay: '0.3s' }}>
+      <footer className="border-t bg-card animate-fade-in" style={{ animationDelay: '0.3s' }}>
         <div className="container mx-auto px-4 py-4">
-          <div className="flex flex-col items-center justify-between gap-2 text-sm text-muted-foreground md:flex-row">
-            <div className="flex items-center gap-2">
-              <Code2 className="h-4 w-4" />
+          <div className="flex flex-col items-center justify-between gap-3 text-sm text-muted-foreground md:flex-row">
+            <div className="flex flex-wrap items-center justify-center gap-x-2 gap-y-1">
+              <Heart className="h-4 w-4 text-primary" />
               <span>
-                兼容{' '}
-                <a href="https://github.com/Pimeng/tphira-mp" target="_blank" rel="noopener noreferrer">
-                  tphira-mp
+                <a
+                  href={BRAND.siteUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-medium text-primary hover:underline"
+                >
+                  {BRAND.owner}
                 </a>{' '}
-                的 API 格式 |{' '}
-                <a href="https://phira.dmocken.top/status" target="_blank" rel="noopener noreferrer">
-                  多人联机服务可用性
-                </a>
+                的 Phira 服务器面板 · 联机地址{' '}
+                <span className="font-mono">{BRAND.joinAddress}</span>
               </span>
+            </div>
+            <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1">
+              <a
+                href={BRAND.statusUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="transition-colors hover:text-primary"
+              >
+                服务器状态
+              </a>
+              {BRAND.groups.map((group) => (
+                <a
+                  key={group.url}
+                  href={group.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="transition-colors hover:text-primary"
+                >
+                  {group.label}
+                </a>
+              ))}
             </div>
             <div className="flex items-center gap-4">
               {isConfigured && (
@@ -223,11 +248,53 @@ function MainLayout() {
               </span>
             </div>
           </div>
+
+          {/* 原作者署名与开源协议（遵循 MIT License，请勿移除） */}
+          <div className="mt-3 flex flex-wrap items-center justify-center gap-x-2 gap-y-1 border-t pt-3 text-xs text-muted-foreground">
+            <Code2 className="h-3.5 w-3.5" />
+            <span>
+              本面板基于{' '}
+              <a
+                href="https://github.com/Pimeng/mp-admin"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-primary hover:underline"
+              >
+                mp-admin
+              </a>{' '}
+              二次开发 · 原作者{' '}
+              <a
+                href="https://github.com/Pimeng"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-primary hover:underline"
+              >
+                Pimeng
+              </a>{' '}
+              · MIT License | 兼容{' '}
+              <a
+                href="https://github.com/Pimeng/tphira-mp"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-primary hover:underline"
+              >
+                tphira-mp
+              </a>{' '}
+              的 API 格式 |{' '}
+              <a
+                href="https://phira.dmocken.top/status"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-primary hover:underline"
+              >
+                多人联机服务可用性
+              </a>
+            </span>
+          </div>
         </div>
       </footer>
 
       <Toaster position="top-right" />
-      <BrutalCookieConsent />
     </div>
   );
 }
@@ -304,7 +371,7 @@ function RootRedirect() {
 
 function App() {
   return (
-    <BrowserRouter>
+    <HashRouter>
       <Routes>
         <Route path="/" element={<MainLayout />}>
           <Route index element={<RootRedirect />} />
@@ -332,7 +399,7 @@ function App() {
         <Route path="/public/room/:roomId" element={<PublicRoomDetailPage />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
-    </BrowserRouter>
+    </HashRouter>
   );
 }
 

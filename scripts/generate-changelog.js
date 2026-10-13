@@ -7,7 +7,7 @@
  */
 
 import { execSync } from 'child_process'
-import { writeFileSync, mkdirSync } from 'fs'
+import { writeFileSync, mkdirSync, readFileSync, existsSync } from 'fs'
 import { dirname, join } from 'path'
 import { fileURLToPath } from 'url'
 
@@ -110,8 +110,26 @@ function main() {
     // 目录已存在
   }
 
-  // 写入 JSON 文件
   const outputPath = join(publicDir, 'changelog.json')
+
+  // 浅克隆且拉取完整历史失败时，git 只能拿到 1 条记录。
+  // 此时保留仓库里已提交的 changelog.json，不要把完整历史覆盖成 1 条。
+  if (commits.length <= 1 && existsSync(outputPath)) {
+    try {
+      const existing = JSON.parse(readFileSync(outputPath, 'utf-8'))
+      const existingCount = existing?.commits?.length ?? 0
+      if (existingCount > commits.length) {
+        console.log(
+          `仅获取到 ${commits.length} 条记录，保留已有的 ${existingCount} 条，跳过写入`
+        )
+        return
+      }
+    } catch {
+      // 已有文件不可读，继续写入
+    }
+  }
+
+  // 写入 JSON 文件
   const data = {
     generatedAt: new Date().toISOString(),
     totalCommits: commits.length,

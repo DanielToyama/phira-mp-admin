@@ -6,6 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Settings, Key, Globe, Save, TestTube } from 'lucide-react';
 import { apiService } from '@/services/api';
+import { DEFAULT_API_BASE_URL } from '@/lib/branding';
 import { toast } from 'sonner';
 
 interface ConfigPanelProps {
@@ -99,12 +100,12 @@ export function ConfigPanel({ onConfigChange }: ConfigPanelProps) {
           </Label>
           <Input
             id="baseUrl"
-            placeholder="http://127.0.0.1:12347"
+            placeholder={DEFAULT_API_BASE_URL}
             value={baseUrl}
             onChange={(e) => setBaseUrl(e.target.value)}
           />
           <p className="text-xs text-muted-foreground">
-            例如: http://127.0.0.1:12347 或 https://your-server.com
+            例如: {DEFAULT_API_BASE_URL}
           </p>
         </div>
 
