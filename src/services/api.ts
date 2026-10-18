@@ -2,6 +2,7 @@ import type {
   ApiConfig,
   Room,
   PublicRoom,
+  LeaderboardResponse,
   UserInfo,
   ReplayAuthResponse,
   OtpRequestResponse,
@@ -74,6 +75,11 @@ class ApiService {
   // 获取房间列表
   async getRooms(): Promise<{ rooms: PublicRoom[]; total: number }> {
     return this.request('/room');
+  }
+
+  // 获取游玩排行（公开接口，无需鉴权）
+  async getLeaderboard(offset: number, limit: number): Promise<LeaderboardResponse> {
+    return this.request(`/stats/leaderboard?offset=${offset}&limit=${limit}`);
   }
 
   // 回放认证
@@ -271,25 +277,16 @@ class ApiService {
 
   // ========== Phira 用户信息 ==========
 
-  // 获取当前登录用户信息（使用用户登录的 token）
+  // ========== Phira 用户信息 ==========
+
+  /**
+   * 获取当前登录用户信息（使用用户登录的 token）。
+   *
+   * 注意：浏览器里带 Authorization 头请求主站属于跨域请求，网络异常时也会抛错。
+   * 需要区分「TOKEN 失效」与「主站/网络异常」时请改用 phiraApiService.validateSession()。
+   */
   async getCurrentUser(): Promise<CurrentUserInfo> {
-    const userToken = phiraApiService.getUserToken();
-    if (!userToken) {
-      throw new Error('用户未登录');
-    }
-    
-    const response = await fetch('https://phira.5wyxi.com/me', {
-      method: 'GET',
-      headers: {
-        'Authorization': `Bearer ${userToken}`,
-      },
-    });
-    
-    if (!response.ok) {
-      throw new Error('获取用户信息失败');
-    }
-    
-    return response.json();
+    return phiraApiService.fetchCurrentUser();
   }
 }
 

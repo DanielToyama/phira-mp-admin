@@ -31,6 +31,17 @@ export function UserMenu({ onLoginSuccess }: UserMenuProps) {
     checkLoginStatus();
   }, []);
 
+  // TOKEN 失效（取不到账号资料）时同步切回未登录
+  useEffect(() => {
+    const handleExpired = () => {
+      setIsLoggedIn(false);
+      setUserId(0);
+      setCurrentUser(null);
+    };
+    window.addEventListener('phiraSessionExpired', handleExpired);
+    return () => window.removeEventListener('phiraSessionExpired', handleExpired);
+  }, []);
+
   useEffect(() => {
     if (isLoggedIn) {
       fetchCurrentUser();
@@ -45,11 +56,10 @@ export function UserMenu({ onLoginSuccess }: UserMenuProps) {
   };
 
   const fetchCurrentUser = async () => {
-    try {
-      const userInfo = await apiService.getCurrentUser();
-      setCurrentUser(userInfo);
-    } catch (error) {
-      console.error('获取用户信息失败:', error);
+    // 用 validateSession 而不是直接取资料：既拿到资料，又能在 TOKEN 失效时触发登出
+    const result = await phiraApiService.validateSession();
+    if (result.status === 'valid') {
+      setCurrentUser(result.profile);
     }
   };
 

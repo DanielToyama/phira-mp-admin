@@ -85,37 +85,49 @@ export function ReplayPanel() {
     const uid = phiraApiService.getUserId();
     const savedUrl = localStorage.getItem('api_base_url') || '';
 
-    if (token && uid) {
-      setIsLoggedIn(true);
-      setUserId(uid);
+    if (!token || !uid) return;
 
-      // 获取用户信息
-      apiService.getCurrentUser().then((userInfo) => {
-        setUserName(userInfo.name);
-      }).catch(() => {
-        // 获取失败时不影响其他功能
-      });
+    setIsLoggedIn(true);
+    setUserId(uid);
+
+    // 先校验登录态：判为失效时事件会通知本组件切回未登录，这里直接中止；
+    // 网络异常等无法判定的情况按「未失效」处理，继续尝试拉取回放
+    void phiraApiService.validateSession().then((result) => {
+      if (result.status === 'expired') return;
+      if (result.status === 'valid') setUserName(result.profile.name);
 
       // 如果API已配置，自动获取回放
-      if (savedUrl) {
-        setAutoLoading(true);
-        apiService.replayAuth(token).then((data) => {
-          if (data.ok) {
-            setReplayData(data);
-            setSessionToken(data.sessionToken);
-            toast.success(`已自动加载 ${data.charts?.length || 0} 个谱面的回放记录`);
-            // 预加载谱面信息
-            data.charts?.forEach((chart: ReplayChart) => {
-              loadChartInfo(chart.chartId);
-            });
-          }
-        }).catch((err) => {
-          console.error('[ReplayPanel] 自动获取回放失败:', err);
-        }).finally(() => {
-          setAutoLoading(false);
-        });
-      }
-    }
+      if (!savedUrl) return;
+      setAutoLoading(true);
+      apiService.replayAuth(token).then((data) => {
+        if (data.ok) {
+          setReplayData(data);
+          setSessionToken(data.sessionToken);
+          toast.success(`已自动加载 ${data.charts?.length || 0} 个谱面的回放记录`);
+          // 预加载谱面信息
+          data.charts?.forEach((chart: ReplayChart) => {
+            loadChartInfo(chart.chartId);
+          });
+        }
+      }).catch((err) => {
+        console.error('[ReplayPanel] 自动获取回放失败:', err);
+      }).finally(() => {
+        setAutoLoading(false);
+      });
+    });
+  }, []);
+
+  // TOKEN 失效时清空回放列表并切回未登录
+  useEffect(() => {
+    const handleExpired = () => {
+      setIsLoggedIn(false);
+      setUserId(0);
+      setUserName('');
+      setReplayData(null);
+      setSessionToken('');
+    };
+    window.addEventListener('phiraSessionExpired', handleExpired);
+    return () => window.removeEventListener('phiraSessionExpired', handleExpired);
   }, []);
 
   // 监听登录成功事件，自动更新回放列表

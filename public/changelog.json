@@ -1,7 +1,16 @@
 {
-  "generatedAt": "2026-10-13T11:02:29.745Z",
-  "totalCommits": 95,
+  "generatedAt": "2026-10-18T15:03:46.719Z",
+  "totalCommits": 96,
   "commits": [
+    {
+      "hash": "bb95809",
+      "date": "2026-10-13 19:26:02 +0800",
+      "message": "feat: 房间人数上限显示真实值，回放页新增文件说明提示",
+      "type": "feat",
+      "typeLabel": "新功能",
+      "content": "房间人数上限显示真实值，回放页新增文件说明提示",
+      "author": "DanielToyama"
+    },
     {
       "hash": "15727a1",
       "date": "2026-10-13 14:13:52 +0800",

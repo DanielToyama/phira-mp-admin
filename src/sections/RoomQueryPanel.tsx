@@ -281,9 +281,27 @@ export function RoomQueryPanel() {
             <>
               {/* 移动端：堆叠卡片 */}
               <div className="space-y-2 sm:hidden">
-                {filteredRooms.map((room) => {
+                {filteredRooms.map((room, index) => {
                   const chartId = Number(room.chart?.id);
                   const chartInfo = chartInfos.get(chartId);
+
+                  // 隐私房间：只显示灰块，不可点击、不暴露任何信息
+                  if (room.hidden) {
+                    return (
+                      <div
+                        key={`hidden-${index}`}
+                        className="rounded-lg border border-dashed bg-muted/50 p-3 text-muted-foreground"
+                      >
+                        <div className="flex items-center gap-2">
+                          <Lock className="h-4 w-4" />
+                          <span className="font-medium">*隐藏的房间*</span>
+                        </div>
+                        <p className="mt-1 text-xs">
+                          房主将房间设为隐私，只有知道完整房间号的人才能加入
+                        </p>
+                      </div>
+                    );
+                  }
 
                   return (
                     <div
@@ -359,10 +377,29 @@ export function RoomQueryPanel() {
                     </TableRow>
                   </TableHeader>
               <TableBody>
-                {filteredRooms.map((room) => {
+                {filteredRooms.map((room, index) => {
                   const chartId = Number(room.chart?.id);
                   const chartInfo = chartInfos.get(chartId);
                   const playerNames = room.players?.map((p) => `${p.name} (${p.id})`).join('、');
+
+                  // 隐私房间：灰块行，无点击事件
+                  if (room.hidden) {
+                    return (
+                      <TableRow key={`hidden-${index}`} className="bg-muted/50 text-muted-foreground">
+                        <TableCell className="font-medium">*隐藏的房间*</TableCell>
+                        <TableCell>-</TableCell>
+                        <TableCell>-</TableCell>
+                        <TableCell className="text-center">-</TableCell>
+                        <TableCell>
+                          <Badge variant="secondary" className="gap-1">
+                            <Lock className="h-3 w-3" />
+                            隐私
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="text-right">-</TableCell>
+                      </TableRow>
+                    );
+                  }
 
                   return (
                     <TableRow

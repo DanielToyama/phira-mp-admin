@@ -138,6 +138,13 @@ export function ModeSelectPage() {
     };
   }, []);
 
+  // TOKEN 失效时切回未登录
+  useEffect(() => {
+    const handleExpired = () => setIsLoggedIn(false);
+    window.addEventListener('phiraSessionExpired', handleExpired);
+    return () => window.removeEventListener('phiraSessionExpired', handleExpired);
+  }, []);
+
   // URL 安全策略检查
   const urlSecurity = useMemo(() => {
     if (!baseUrl) return { valid: true as const };

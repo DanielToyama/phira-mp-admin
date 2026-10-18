@@ -1,5 +1,7 @@
 // Phira 官方 API 服务
 
+import type { CurrentUserInfo } from '@/types/api';
+
 export interface PhiraLoginRequest {
   email: string;
   password: string;
@@ -95,10 +97,35 @@ const STORAGE_KEY_USER_LIST = 'phira_user_list_cache';
 const STORAGE_KEY_USER_LIST_COUNT = 'phira_user_list_count';
 const STORAGE_KEY_USER_LIST_PAGE = 'phira_user_list_page';
 const STORAGE_KEY_USER_LIST_TIMESTAMP = 'phira_user_list_timestamp';
+/** 登录返回的 TOKEN 过期时间（毫秒时间戳），用于本地判定，避免无谓的网络请求 */
+const STORAGE_KEY_TOKEN_EXPIRE = 'phira_token_expire_at';
+
+/** 把登录接口返回的 ISO 过期时间转成毫秒时间戳；无法解析时返回 0（视为未知） */
+function parseExpireAt(value: unknown): number {
+  if (typeof value !== 'string' || !value) return 0;
+  const t = Date.parse(value);
+  return Number.isFinite(t) ? t : 0;
+}
+
+/**
+ * 登录态校验结果。
+ *
+ * - `valid`：TOKEN 有效，附带账号资料
+ * - `expired`：TOKEN 已失效（本地过期 / 主站 401 / 资料残缺），此时本地登录信息已被清空
+ * - `unknown`：网络异常或主站故障，无法判定，登录态保持不变
+ */
+export type SessionValidation =
+  | { status: 'valid'; profile: CurrentUserInfo }
+  | { status: 'expired' }
+  | { status: 'unknown' };
 
 class PhiraApiService {
   private userToken: string = '';
   private userId: number = 0;
+  /** TOKEN 过期时间（毫秒时间戳），0 表示未知 */
+  private tokenExpireAt: number = 0;
+  /** 并发调用合并用的进行中校验请求 */
+  private sessionInFlight: Promise<SessionValidation> | null = null;
 
   constructor() {
     // 从 localStorage 加载保存的登录信息
@@ -110,12 +137,17 @@ class PhiraApiService {
     
     const savedToken = localStorage.getItem(STORAGE_KEY_TOKEN);
     const savedUserId = localStorage.getItem(STORAGE_KEY_USER_ID);
-    
+    const savedExpire = localStorage.getItem(STORAGE_KEY_TOKEN_EXPIRE);
+
     if (savedToken) {
       this.userToken = savedToken;
     }
     if (savedUserId) {
       this.userId = parseInt(savedUserId, 10);
+    }
+    if (savedExpire) {
+      const t = parseInt(savedExpire, 10);
+      if (Number.isFinite(t)) this.tokenExpireAt = t;
     }
   }
 
@@ -133,11 +165,19 @@ class PhiraApiService {
     } else {
       localStorage.removeItem(STORAGE_KEY_USER_ID);
     }
+
+    if (this.tokenExpireAt > 0) {
+      localStorage.setItem(STORAGE_KEY_TOKEN_EXPIRE, this.tokenExpireAt.toString());
+    } else {
+      localStorage.removeItem(STORAGE_KEY_TOKEN_EXPIRE);
+    }
   }
 
-  setUserToken(token: string, userId: number = 0) {
+  setUserToken(token: string, userId: number = 0, expireAt?: unknown) {
     this.userToken = token;
     if (userId) this.userId = userId;
+    const parsed = parseExpireAt(expireAt);
+    if (parsed > 0) this.tokenExpireAt = parsed;
     this.saveToStorage();
   }
 
@@ -152,7 +192,78 @@ class PhiraApiService {
   clearAuth() {
     this.userToken = '';
     this.userId = 0;
+    this.tokenExpireAt = 0;
+    this.sessionInFlight = null;
     this.saveToStorage();
+  }
+
+  /**
+   * 拉取当前 TOKEN 对应的账号资料（含邮箱、头像等）。
+   *
+   * @throws 未登录、请求失败或返回体缺少关键字段时抛错。
+   *         需要区分「TOKEN 失效」与「网络/主站异常」时请改用 validateSession()。
+   */
+  async fetchCurrentUser(): Promise<CurrentUserInfo> {
+    if (!this.userToken) throw new Error('user-not-logged-in');
+    const response = await fetch(`${PHIRA_API_BASE}/me`, {
+      method: 'GET',
+      headers: { Authorization: `Bearer ${this.userToken}` },
+    });
+    if (!response.ok) throw new Error(`fetch-me-failed:${response.status}`);
+    const data = (await response.json()) as Partial<CurrentUserInfo>;
+    if (!data || typeof data.id !== 'number' || !data.name) throw new Error('invalid-profile');
+    return data as CurrentUserInfo;
+  }
+
+  /**
+   * 校验本地登录态是否仍然有效。
+   *
+   * 判定顺序：
+   *   1. 本地保存的过期时间已过 → 直接判失效，不发网络请求；
+   *   2. 主站 /me 返回 401/403，或返回体缺少关键字段（id/name，即邮箱头像那套资料）→ 判失效；
+   *   3. 主站 5xx、限流、网络异常等 → 归为 unknown，**保留登录态**，避免网络抖动把用户踢下线。
+   *
+   * 判定失效时会清空本地登录信息并广播 `phiraSessionExpired`。
+   * 并发调用会合并为一次请求。
+   */
+  async validateSession(): Promise<SessionValidation> {
+    if (!this.userToken) return { status: 'expired' };
+    if (this.sessionInFlight) return this.sessionInFlight;
+
+    const promise = (async (): Promise<SessionValidation> => {
+      try {
+        if (this.tokenExpireAt > 0 && Date.now() >= this.tokenExpireAt) {
+          return this.expireSession();
+        }
+        const response = await fetch(`${PHIRA_API_BASE}/me`, {
+          method: 'GET',
+          headers: { Authorization: `Bearer ${this.userToken}` },
+        });
+        if (response.status === 401 || response.status === 403) return this.expireSession();
+        // 主站侧故障（5xx / 限流）不能作为登录失效的依据
+        if (!response.ok) return { status: 'unknown' };
+        const data = (await response.json()) as Partial<CurrentUserInfo>;
+        if (!data || typeof data.id !== 'number' || !data.name) return this.expireSession();
+        return { status: 'valid', profile: data as CurrentUserInfo };
+      } catch {
+        // 网络异常或被拦截：无法判定，保留登录态
+        return { status: 'unknown' };
+      } finally {
+        this.sessionInFlight = null;
+      }
+    })();
+
+    this.sessionInFlight = promise;
+    return promise;
+  }
+
+  /** 清空登录态并广播失效事件 */
+  private expireSession(): SessionValidation {
+    this.clearAuth();
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('phiraSessionExpired'));
+    }
+    return { status: 'expired' };
   }
 
   // 用户列表 localStorage 缓存
@@ -213,7 +324,7 @@ class PhiraApiService {
       throw new Error(data.error || '登录失败');
     }
 
-    this.setUserToken(data.token, data.id);
+    this.setUserToken(data.token, data.id, data.expireAt);
     return data;
   }
 

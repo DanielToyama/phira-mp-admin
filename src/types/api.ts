@@ -50,6 +50,30 @@ export interface PublicRoom {
   /** 房间人数上限。官方 tphira-mp 的 /room 不含此字段，为可选；
    *  自建服务端会附带返回，取不到时不要伪造默认值。 */
   max_users?: number;
+  /** 隐私房间（房号以 h 开头）：服务端会清空所有详情，前端渲染为不可点击的灰块 */
+  hidden?: boolean;
+}
+
+/** 游玩排行条目（服务端 /stats/leaderboard 返回） */
+export interface LeaderboardEntry {
+  id: number;
+  name: string;
+  /** 已完成的对局数 */
+  plays: number;
+  /** 平均分数 */
+  avg_score: number;
+  /** 平均准度（0..1） */
+  avg_accuracy: number;
+  /** 最近一次游玩时间（毫秒时间戳） */
+  last_played: number;
+}
+
+export interface LeaderboardResponse {
+  ok: boolean;
+  total: number;
+  offset: number;
+  limit: number;
+  players: LeaderboardEntry[];
 }
 
 export interface UserInfo {

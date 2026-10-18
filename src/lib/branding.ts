@@ -16,6 +16,10 @@ export const BRAND = {
   siteUrl: 'https://danieluu.top',
   /** 服务器状态页（原版监控页） */
   statusUrl: 'https://iphira.danieluu.top/',
+  /** 本面板（游玩记录 / 游玩排行 / 回放查询）的线上地址 */
+  panelUrl: 'https://tphira.danieluu.top/',
+  /** Uptime Kuma 状态接口（提供心跳数据，用于渲染可用性格子） */
+  statusApiUrl: 'https://kumaphira.danieluu.top/api',
   /** 游戏内联机地址 */
   joinAddress: 'phira.Danieluu.top:26638',
   /** 交流群 */

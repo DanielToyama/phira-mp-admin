@@ -16,6 +16,10 @@ import { ProtectedPanel } from '@/components/ProtectedPanel';
 import { PlayerLayout } from '@/components/PlayerLayout';
 import { RoomQueryPanel } from '@/sections/RoomQueryPanel';
 import { ReplayPanel } from '@/sections/ReplayPanel';
+import { LeaderboardPanel } from '@/sections/LeaderboardPanel';
+import { CommunityPanel } from '@/sections/CommunityPanel';
+import { ConnectPanel } from '@/sections/ConnectPanel';
+import { StatusPanel } from '@/sections/StatusPanel';
 import { AdminApiPanel } from '@/sections/AdminApiPanel';
 import { ModeSelectPage } from '@/pages/ModeSelectPage';
 import { getLastMode, setLastMode, type AppMode } from '@/lib/app-mode';
@@ -27,6 +31,7 @@ import { useUrlConfig } from '@/hooks/useUrlConfig';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { ChangelogDialog } from '@/components/ChangelogDialog';
 import { BRAND } from '@/lib/branding';
+import { toast } from 'sonner';
 import { version } from '../package.json';
 import {
   Code2,
@@ -60,6 +65,19 @@ function MainLayout() {
 
   useEffect(() => {
     applyApiConfig();
+  }, []);
+
+  // 登录态校验：本地 TOKEN 取不到账号资料（邮箱/头像等）即视为已失效，自动退出登录
+  useEffect(() => {
+    if (phiraApiService.getUserToken()) {
+      void phiraApiService.validateSession();
+    }
+    const handleExpired = () => {
+      setIsLoggedIn(false);
+      toast.error('登录已过期，请重新登录');
+    };
+    window.addEventListener('phiraSessionExpired', handleExpired);
+    return () => window.removeEventListener('phiraSessionExpired', handleExpired);
   }, []);
 
   useEffect(() => {
@@ -365,8 +383,8 @@ function RootRedirect() {
   if (lastMode === 'player') return <Navigate to="/player/rooms" replace />;
   if (lastMode === 'admin') return <Navigate to="/admin/rooms" replace />;
 
-  // 已配置但没选过模式 → 让用户选择
-  return <ModeSelectPage />;
+  // 已配置但没选过模式 → 直接进房间页（首页直达，不再挡一层模式选择）
+  return <Navigate to="/player/rooms" replace />;
 }
 
 function App() {
@@ -379,8 +397,12 @@ function App() {
 
           <Route path="player" element={<PlayerLayout />}>
             <Route index element={<Navigate to="/player/rooms" replace />} />
+            <Route path="connect" element={<ConnectPanel />} />
             <Route path="rooms" element={<RoomQueryPanel />} />
+            <Route path="status" element={<StatusPanel />} />
             <Route path="replay" element={<ReplayPanel />} />
+            <Route path="ranking" element={<LeaderboardPanel />} />
+            <Route path="community" element={<CommunityPanel />} />
           </Route>
 
           <Route path="admin" element={<AdminLayout />}>

@@ -1,9 +1,13 @@
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
-import { Film, Users } from 'lucide-react';
+import { Activity, Film, Link2, MessagesSquare, Trophy, Users } from 'lucide-react';
 
 const playerSubTabs = [
+  { path: '/player/connect', matchPath: '/player/connect', label: '如何连接', icon: Link2 },
   { path: '/player/rooms', matchPath: '/player/rooms', label: '房间查询', icon: Users },
-  { path: '/player/replay', matchPath: '/player/replay', label: '录制回放', icon: Film },
+  { path: '/player/status', matchPath: '/player/status', label: '服务器状态', icon: Activity },
+  { path: '/player/replay', matchPath: '/player/replay', label: '查询回放', icon: Film },
+  { path: '/player/ranking', matchPath: '/player/ranking', label: '游玩排行', icon: Trophy },
+  { path: '/player/community', matchPath: '/player/community', label: '社群加入', icon: MessagesSquare },
 ];
 
 export function PlayerLayout() {
