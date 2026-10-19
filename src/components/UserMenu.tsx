@@ -19,9 +19,11 @@ import type { CurrentUserInfo } from '@/types/api';
 
 interface UserMenuProps {
   onLoginSuccess?: () => void;
+  /** 移动端菜单里需要撑满整列 */
+  fullWidth?: boolean;
 }
 
-export function UserMenu({ onLoginSuccess }: UserMenuProps) {
+export function UserMenu({ onLoginSuccess, fullWidth }: UserMenuProps) {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userId, setUserId] = useState(0);
   const [copied, setCopied] = useState(false);
@@ -111,8 +113,8 @@ export function UserMenu({ onLoginSuccess }: UserMenuProps) {
   if (!isLoggedIn) {
     return (
       <LoginDialog onLoginSuccess={handleLoginSuccess}>
-        <Button variant="outline" size="sm">
-          <User className="h-4 w-4 mr-2" />
+        <Button variant="outline" size="sm" className={fullWidth ? 'w-full' : undefined}>
+          <User className="mr-2 h-4 w-4" />
           登录
         </Button>
       </LoginDialog>
@@ -122,8 +124,8 @@ export function UserMenu({ onLoginSuccess }: UserMenuProps) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" size="sm" className="gap-2">
-          <Avatar className="h-6 w-6">
+        <Button variant="outline" size="sm" className={fullWidth ? 'w-full gap-2' : 'gap-2'}>
+          <Avatar className="h-6 w-6 shrink-0">
             {currentUser?.avatar ? (
               <AvatarImage src={currentUser.avatar} alt={currentUser.name} />
             ) : null}
@@ -131,7 +133,7 @@ export function UserMenu({ onLoginSuccess }: UserMenuProps) {
               {currentUser?.name?.[0]?.toUpperCase() || userId.toString().slice(0, 2)}
             </AvatarFallback>
           </Avatar>
-          <span className="hidden sm:inline">
+          <span className={fullWidth ? 'truncate' : 'hidden truncate sm:inline'}>
             {currentUser?.name || `用户 ${userId}`}
           </span>
         </Button>

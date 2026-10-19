@@ -1,7 +1,16 @@
 {
-  "generatedAt": "2026-10-18T15:03:46.719Z",
-  "totalCommits": 96,
+  "generatedAt": "2026-10-19T08:03:56.073Z",
+  "totalCommits": 97,
   "commits": [
+    {
+      "hash": "1015ff2",
+      "date": "2026-10-18 23:56:44 +0800",
+      "message": "feat: 新增游玩排行/社群加入/如何连接/服务器状态页，登录态失效检测",
+      "type": "feat",
+      "typeLabel": "新功能",
+      "content": "新增游玩排行/社群加入/如何连接/服务器状态页，登录态失效检测",
+      "author": "DanielToyama"
+    },
     {
       "hash": "bb95809",
       "date": "2026-10-13 19:26:02 +0800",

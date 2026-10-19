@@ -79,18 +79,18 @@ export function PublicRoomDetailPage() {
       {/* Header */}
       <header className="border-b bg-card sticky top-0 z-50">
         <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <Button variant="outline" size="sm" onClick={() => navigate('/player/rooms')}>
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <div className="flex min-w-0 items-center gap-3">
+              <Button variant="outline" size="sm" className="shrink-0" onClick={() => navigate('/player/rooms')}>
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 返回
               </Button>
-              <div>
-                <h1 className="text-xl font-bold">房间详情</h1>
-                <p className="text-sm text-muted-foreground">{room.roomid}</p>
+              <div className="min-w-0">
+                <h1 className="truncate text-lg font-bold sm:text-xl">房间详情</h1>
+                <p className="truncate text-sm text-muted-foreground">{room.roomid}</p>
               </div>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2">
               <StateBadge state={room.state} />
               {room.lock ? (
                 <Badge variant="destructive" className="gap-1">

@@ -207,9 +207,10 @@ export function RoomQueryPanel() {
       )}
       <Card className="flex flex-1 flex-col">
         <CardHeader>
-          <CardTitle className="grid gap-3 md:grid-cols-[minmax(0,1fr)_minmax(320px,520px)_auto] md:items-center">
-            <div className="flex items-center gap-2">
-              <Users className="h-5 w-5" />
+          {/* 标题列用 auto 而不是 1fr：768px 时搜索框会抢走全部宽度，把标题挤成竖排 */}
+          <CardTitle className="grid gap-3 md:grid-cols-[auto_minmax(0,1fr)_auto] md:items-center">
+            <div className="flex items-center gap-2 whitespace-nowrap">
+              <Users className="h-5 w-5 shrink-0" />
               房间列表
               {rooms.length > 0 && (
                 <Badge variant="secondary" className="ml-2">

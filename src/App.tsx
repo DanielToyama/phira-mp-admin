@@ -28,6 +28,7 @@ import { PublicRoomDetailPage } from '@/pages/PublicRoomDetailPage';
 import { phiraApiService } from '@/services/phiraApi';
 import { applyApiConfig } from '@/hooks/useApiConfig';
 import { useUrlConfig } from '@/hooks/useUrlConfig';
+import { useIsNarrowViewport } from '@/hooks/use-mobile';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { ChangelogDialog } from '@/components/ChangelogDialog';
 import { BRAND } from '@/lib/branding';
@@ -54,6 +55,7 @@ function MainLayout() {
   const [isLoggedIn, setIsLoggedIn] = useState(() => !!phiraApiService.getUserToken());
   const [configKey, setConfigKey] = useState(0);
   const { hasUrlConfig, isValidating, applyConfig } = useUrlConfig();
+  const isMobile = useIsNarrowViewport(1024);
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -115,24 +117,24 @@ function MainLayout() {
     <div className="flex min-h-screen flex-col bg-background app-gradient-bg">
       <header className="sticky top-0 z-50 border-b bg-card animate-fade-in">
         <div className="brand-topline h-1 w-full" />
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between gap-4">
+        <div className="container mx-auto px-4 py-3 md:py-4">
+          <div className="flex items-center justify-between gap-3">
             <button
               type="button"
-              className="flex items-center gap-3 rounded-md text-left transition-opacity hover:opacity-80"
+              className="flex min-w-0 items-center gap-3 rounded-md text-left transition-opacity hover:opacity-80"
               onClick={() => navigate('/select')}
               title="返回模式选择页"
             >
-              <div className="brand-logo rounded-lg p-2 transition-transform hover:scale-105">
+              <div className="brand-logo shrink-0 rounded-lg p-2 transition-transform hover:scale-105">
                 <Server className="h-6 w-6 text-primary-foreground" />
               </div>
-              <div>
-                <h1 className="text-xl font-bold">{BRAND.name}</h1>
-                <p className="text-sm text-muted-foreground">{BRAND.subtitle}</p>
+              <div className="min-w-0">
+                <h1 className="truncate text-lg font-bold md:text-xl">{BRAND.name}</h1>
+                <p className="truncate text-xs text-muted-foreground md:text-sm">{BRAND.subtitle}</p>
               </div>
             </button>
 
-            <div className="hidden items-center gap-3 md:flex">
+            <div className="hidden shrink-0 items-center gap-2 md:flex lg:gap-3">
               {isValidating && (
                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
                   <Loader2 className="h-4 w-4 animate-spin" />
@@ -155,8 +157,10 @@ function MainLayout() {
 
             <Button
               variant="ghost"
-              size="sm"
-              className="md:hidden"
+              size="icon"
+              className="shrink-0 md:hidden"
+              aria-label={isMobileMenuOpen ? '收起菜单' : '展开菜单'}
+              aria-expanded={isMobileMenuOpen}
               onClick={() => setIsMobileMenuOpen((prev) => !prev)}
             >
               {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
@@ -164,25 +168,28 @@ function MainLayout() {
           </div>
 
           {isMobileMenuOpen && (
-            <div className="mt-4 space-y-3 border-t pt-4 animate-slide-in md:hidden">
+            <div className="mt-3 space-y-2 border-t pt-3 animate-slide-in md:hidden">
               {isValidating && (
                 <div className="flex items-center justify-center gap-2 py-2 text-sm text-muted-foreground">
                   <Loader2 className="h-4 w-4 animate-spin" />
                   正在验证配置...
                 </div>
               )}
-              <ModeSwitcher
-                currentMode={currentMode}
-                onSwitch={(mode) => {
-                  handleSwitchMode(mode);
-                  setIsMobileMenuOpen(false);
-                }}
-                fullWidth
-              />
-              <div className="flex items-center gap-3">
-                <ThemeToggle />
+              {/* 模式切换占满剩余宽度，主题按钮独立成列，两者等高对齐 */}
+              <div className="grid grid-cols-[minmax(0,1fr)_auto] gap-2">
+                <ModeSwitcher
+                  currentMode={currentMode}
+                  onSwitch={(mode) => {
+                    handleSwitchMode(mode);
+                    setIsMobileMenuOpen(false);
+                  }}
+                  fullWidth
+                />
+                <ThemeToggle size="icon-sm" />
+              </div>
+              <div className="grid grid-cols-2 gap-2">
                 <ConfigDialog onConfigChange={handleConfigChange}>
-                  <Button variant="outline" size="sm" className="relative flex-1">
+                  <Button variant="outline" size="sm" className="relative w-full">
                     <Settings className="mr-2 h-4 w-4" />
                     API 配置
                     {isConfigured && (
@@ -190,7 +197,7 @@ function MainLayout() {
                     )}
                   </Button>
                 </ConfigDialog>
-                <UserMenu onLoginSuccess={handleLoginSuccess} />
+                <UserMenu onLoginSuccess={handleLoginSuccess} fullWidth />
               </div>
             </div>
           )}
@@ -205,9 +212,9 @@ function MainLayout() {
 
       <footer className="border-t bg-card animate-fade-in" style={{ animationDelay: '0.3s' }}>
         <div className="container mx-auto px-4 py-4">
-          <div className="flex flex-col items-center justify-between gap-3 text-sm text-muted-foreground md:flex-row">
-            <div className="flex flex-wrap items-center justify-center gap-x-2 gap-y-1">
-              <Heart className="h-4 w-4 text-primary" />
+          <div className="flex flex-col items-center justify-between gap-3 text-sm text-muted-foreground lg:flex-row">
+            <div className="flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-center">
+              <Heart className="h-4 w-4 shrink-0 text-primary" />
               <span>
                 <a
                   href={BRAND.siteUrl}
@@ -226,7 +233,7 @@ function MainLayout() {
                 href={BRAND.statusUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="transition-colors hover:text-primary"
+                className="whitespace-nowrap transition-colors hover:text-primary"
               >
                 服务器状态
               </a>
@@ -236,32 +243,32 @@ function MainLayout() {
                   href={group.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="transition-colors hover:text-primary"
+                  className="whitespace-nowrap transition-colors hover:text-primary"
                 >
                   {group.label}
                 </a>
               ))}
             </div>
-            <div className="flex items-center gap-4">
+            <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1">
               {isConfigured && (
-                <span className="flex items-center gap-1 text-green-600">
-                  <span className="h-2 w-2 rounded-full bg-green-500" />
+                <span className="flex items-center gap-1 whitespace-nowrap text-green-600">
+                  <span className="h-2 w-2 shrink-0 rounded-full bg-green-500" />
                   API 已配置
                 </span>
               )}
               {isLoggedIn && (
-                <span className="flex items-center gap-1 text-blue-600">
-                  <span className="h-2 w-2 rounded-full bg-blue-500" />
+                <span className="flex items-center gap-1 whitespace-nowrap text-blue-600">
+                  <span className="h-2 w-2 shrink-0 rounded-full bg-blue-500" />
                   已登录
                 </span>
               )}
               <ChangelogDialog>
-                <button className="flex cursor-pointer items-center gap-1 text-muted-foreground transition-colors hover:text-primary">
-                  <Tag className="h-3 w-3" />
+                <button className="flex cursor-pointer items-center gap-1 whitespace-nowrap text-muted-foreground transition-colors hover:text-primary">
+                  <Tag className="h-3 w-3 shrink-0" />
                   前端版本 v{version}
                 </button>
               </ChangelogDialog>
-              <span className="flex items-center gap-1 text-muted-foreground" title="Git Commit Hash">
+              <span className="flex items-center gap-1 whitespace-nowrap text-muted-foreground" title="Git Commit Hash">
                 <span className="text-xs">({__GIT_COMMIT_HASH__})</span>
               </span>
             </div>
@@ -312,7 +319,7 @@ function MainLayout() {
         </div>
       </footer>
 
-      <Toaster position="top-right" />
+      <Toaster position={isMobile ? 'bottom-center' : 'top-right'} />
     </div>
   );
 }

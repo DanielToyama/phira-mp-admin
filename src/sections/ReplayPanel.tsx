@@ -372,18 +372,19 @@ export function ReplayPanel() {
           <CardDescription>查看和下载用户的游戏回放记录</CardDescription>
         </CardHeader>
         <CardContent className="flex flex-1 flex-col space-y-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <User className="h-4 w-4" />
+          {/* 窄屏放不下「文字 + 三个按钮」一行，允许换行，否则文字会被压成竖排 */}
+          <div className="flex flex-wrap items-center justify-between gap-x-2 gap-y-3">
+            <div className="flex min-w-0 items-center gap-2 whitespace-nowrap">
+              <User className="h-4 w-4 shrink-0" />
               {isLoggedIn ? (
-                <span className="text-sm">
+                <span className="truncate text-sm">
                   已登录 <span className="font-medium">{userName || `用户 ${userId}`}</span>
                 </span>
               ) : (
                 <span className="text-sm text-muted-foreground">未登录</span>
               )}
             </div>
-            <div className="flex gap-2">
+            <div className="flex flex-wrap gap-2">
               {isLoggedIn ? (
                 <>
                   <Button 
@@ -426,10 +427,10 @@ export function ReplayPanel() {
           {replayData && replayData.charts && replayData.charts.length > 0 && (
             <div className="space-y-3 animate-fade-in">
               <Separator />
-              <div className="flex items-center gap-2 text-sm">
-                <span className="font-medium">用户 ID: {replayData.userId}</span>
+              <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm">
+                <span className="whitespace-nowrap font-medium">用户 ID: {replayData.userId}</span>
                 <span className="text-muted-foreground">|</span>
-                <span className="text-muted-foreground">
+                <span className="whitespace-nowrap text-muted-foreground">
                   过期: {new Date(replayData.expiresAt).toLocaleString()}
                 </span>
               </div>
@@ -446,13 +447,13 @@ export function ReplayPanel() {
                         className="p-3 border rounded-lg transition-all duration-200"
                       >
                         <div 
-                          className="flex items-center justify-between cursor-pointer"
+                          className="flex items-center justify-between gap-2 cursor-pointer"
                           onClick={() => toggleChartExpand(chart.chartId)}
                         >
-                          <div className="flex items-center gap-2">
-                            <Music className="h-4 w-4 text-muted-foreground" />
+                          <div className="flex min-w-0 items-center gap-2">
+                            <Music className="h-4 w-4 shrink-0 text-muted-foreground" />
                             <span 
-                              className="font-medium hover:text-primary transition-colors"
+                              className="truncate font-medium hover:text-primary transition-colors"
                               onClick={(e) => {
                                 e.stopPropagation();
                                 handleOpenChartDetail(chart.chartId);
@@ -463,7 +464,7 @@ export function ReplayPanel() {
                             {chartInfo && (
                               <Badge 
                                 variant="secondary" 
-                                className="text-xs hover:bg-secondary/80"
+                                className="shrink-0 text-xs hover:bg-secondary/80"
                                 onClick={(e) => {
                                   e.stopPropagation();
                                   handleOpenChartDetail(chart.chartId);
@@ -473,7 +474,7 @@ export function ReplayPanel() {
                               </Badge>
                             )}
                           </div>
-                          <div className="flex items-center gap-2">
+                          <div className="flex shrink-0 items-center gap-2">
                             <Badge variant="outline">{chart.replays.length} 个回放</Badge>
                             {isExpanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
                           </div>
@@ -494,21 +495,21 @@ export function ReplayPanel() {
                               return (
                                 <div
                                   key={replay.timestamp}
-                                  className="flex items-center justify-between p-2 bg-muted rounded transition-colors hover:bg-muted/80"
+                                  className="flex flex-wrap items-center justify-between gap-x-2 gap-y-1 p-2 bg-muted rounded transition-colors hover:bg-muted/80"
                                 >
-                                  <div className="flex items-center gap-2 text-sm">
-                                    <FileAudio className="h-4 w-4" />
-                                    <span>{new Date(replay.timestamp).toLocaleString()}</span>
-                                    <Badge variant="outline" className="text-xs">
+                                  <div className="flex min-w-0 flex-wrap items-center gap-2 text-sm">
+                                    <FileAudio className="h-4 w-4 shrink-0" />
+                                    <span className="whitespace-nowrap">{new Date(replay.timestamp).toLocaleString()}</span>
+                                    <Badge variant="outline" className="shrink-0 text-xs">
                                       ID: {replay.recordId}
                                     </Badge>
                                     {isUploaded && (
-                                      <Badge variant="secondary" className="text-xs">
+                                      <Badge variant="secondary" className="shrink-0 text-xs">
                                         已上传
                                       </Badge>
                                     )}
                                   </div>
-                                  <div className="flex gap-1">
+                                  <div className="flex shrink-0 gap-1">
                                     {isUploaded && replay.downloadUrl ? (
                                       <Button 
                                         size="sm" 
@@ -598,8 +599,8 @@ export function ReplayPanel() {
                   服务器已关闭自动上传功能，请联系管理员开启
                 </div>
               )}
-              <div className="flex items-center justify-between">
-                <div className="space-y-0.5">
+              <div className="flex items-center justify-between gap-3">
+                <div className="min-w-0 space-y-0.5">
                   <Label htmlFor="show-replay">上传后显示</Label>
                   <p className="text-sm text-muted-foreground">
                     自动上传的回放在分享站是否可见
@@ -607,6 +608,7 @@ export function ReplayPanel() {
                 </div>
                 <Switch
                   id="show-replay"
+                  className="shrink-0"
                   checked={autoUploadConfig.show}
                   onCheckedChange={(checked) =>
                     handleUpdateAutoUploadConfig(checked)

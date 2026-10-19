@@ -15,8 +15,9 @@ export function PlayerLayout() {
 
   return (
     <div className="flex flex-1 flex-col space-y-4 animate-fade-in">
-      <nav className="border-b bg-card/50 -mx-4 px-4 md:-mx-0 md:px-0 md:rounded-lg md:border md:bg-card md:py-1">
-        <div className="flex gap-1 overflow-x-auto py-2 md:py-0">
+      <nav className="border-b bg-card/50 -mx-4 px-4 md:mx-0 md:px-0 md:rounded-lg md:border md:bg-card md:py-1">
+        {/* 移动端用 3×2 网格：六个标签全部可见，避免横向滚动把后几项藏起来 */}
+        <div className="grid grid-cols-3 gap-1.5 py-2 md:flex md:gap-1 md:overflow-x-auto md:py-0">
           {playerSubTabs.map((tab) => {
             const Icon = tab.icon;
             const isActive =
@@ -28,14 +29,15 @@ export function PlayerLayout() {
                 key={tab.path}
                 to={tab.path}
                 className={[
-                  'relative flex items-center gap-2 whitespace-nowrap rounded-lg px-4 py-2 text-sm font-medium transition-all duration-200',
+                  'relative flex flex-col items-center justify-center gap-1 whitespace-nowrap rounded-lg px-1 py-2 text-xs font-medium transition-all duration-200',
+                  'md:flex-row md:gap-2 md:px-4 md:text-sm',
                   isActive
                     ? 'bg-primary/10 text-primary'
                     : 'text-muted-foreground hover:bg-muted hover:text-foreground',
                 ].join(' ')}
               >
-                <Icon className="h-4 w-4" />
-                {tab.label}
+                <Icon className="h-4 w-4 shrink-0" />
+                <span className="truncate">{tab.label}</span>
                 {isActive && (
                   <span className="absolute bottom-0 left-2 right-2 h-0.5 rounded-full bg-primary" />
                 )}
