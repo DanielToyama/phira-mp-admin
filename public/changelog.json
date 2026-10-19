@@ -1,7 +1,16 @@
 {
-  "generatedAt": "2026-10-19T08:03:56.073Z",
-  "totalCommits": 97,
+  "generatedAt": "2026-10-19T10:03:50.041Z",
+  "totalCommits": 98,
   "commits": [
+    {
+      "hash": "4403132",
+      "date": "2026-10-19 16:08:39 +0800",
+      "message": "fix: 移动端布局适配",
+      "type": "fix",
+      "typeLabel": "修复",
+      "content": "移动端布局适配",
+      "author": "DanielToyama"
+    },
     {
       "hash": "1015ff2",
       "date": "2026-10-18 23:56:44 +0800",

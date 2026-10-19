@@ -3,6 +3,7 @@ import type {
   Room,
   PublicRoom,
   LeaderboardResponse,
+  MyRankResponse,
   UserInfo,
   ReplayAuthResponse,
   OtpRequestResponse,
@@ -80,6 +81,11 @@ class ApiService {
   // 获取游玩排行（公开接口，无需鉴权）
   async getLeaderboard(offset: number, limit: number): Promise<LeaderboardResponse> {
     return this.request(`/stats/leaderboard?offset=${offset}&limit=${limit}`);
+  }
+
+  // 按用户查名次（公开接口，无需鉴权）
+  async getMyRank(userId: number): Promise<MyRankResponse> {
+    return this.request(`/stats/leaderboard?user_id=${userId}`);
   }
 
   // 回放认证

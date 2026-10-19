@@ -76,6 +76,17 @@ export interface LeaderboardResponse {
   players: LeaderboardEntry[];
 }
 
+/**
+ * `/stats/leaderboard?user_id=N` 的返回：按用户查名次。
+ * rank 从 1 起，未上榜时为 0 且 entry 为 null。
+ */
+export interface MyRankResponse {
+  ok: boolean;
+  total: number;
+  rank: number;
+  entry: LeaderboardEntry | null;
+}
+
 export interface UserInfo {
   id: number;
   name: string;
