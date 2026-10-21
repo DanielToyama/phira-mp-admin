@@ -87,6 +87,43 @@ export interface MyRankResponse {
   entry: LeaderboardEntry | null;
 }
 
+/** 每日一句 */
+export interface DailyQuote {
+  quote: string;
+  from: string;
+}
+
+/** `/stats/server` 的返回：社区面板数据 */
+export interface ServerStatsResponse {
+  ok: boolean;
+  /** 服务器上线日期（本功能首次启动）YYYY-MM-DD */
+  bornDate: string;
+  /** 今天是服务器第几天（1 起） */
+  serverDay: number;
+  today: string;
+  /** 累计出现过的账号数 */
+  totalAccounts: number;
+  /** 今日连接次数 */
+  todayConnections: number;
+  /** 今日连入的不同账号数 */
+  todayUsers: number;
+  /** 今日新账号数 */
+  todayNewAccounts: number;
+  /** 当前在线人数 */
+  onlineUsers: number;
+  /** 当前房间数 */
+  rooms: number;
+  /** 今日房间名聚合（只有统计量，没有原文） */
+  roomStats: {
+    created: number;
+    maxNameLength: number;
+    withDigit: number;
+    digitRatio: number;
+    easter: Record<string, number>;
+  };
+  dailyQuote: DailyQuote;
+}
+
 export interface UserInfo {
   id: number;
   name: string;

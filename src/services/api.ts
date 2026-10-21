@@ -4,6 +4,7 @@ import type {
   PublicRoom,
   LeaderboardResponse,
   MyRankResponse,
+  ServerStatsResponse,
   UserInfo,
   ReplayAuthResponse,
   OtpRequestResponse,
@@ -86,6 +87,11 @@ class ApiService {
   // 按用户查名次（公开接口，无需鉴权）
   async getMyRank(userId: number): Promise<MyRankResponse> {
     return this.request(`/stats/leaderboard?user_id=${userId}`);
+  }
+
+  // 社区面板数据（公开接口，无需鉴权）
+  async getServerStats(): Promise<ServerStatsResponse> {
+    return this.request('/stats/server');
   }
 
   // 回放认证

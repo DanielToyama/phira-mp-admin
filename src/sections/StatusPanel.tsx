@@ -1,9 +1,13 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Activity, Loader2, RefreshCw } from 'lucide-react';
+import { Activity, CalendarDays, Loader2, MessagesSquare, Quote, RefreshCw, Users } from 'lucide-react';
 import { BRAND } from '@/lib/branding';
+import { apiService } from '@/services/api';
+import { applyApiConfig } from '@/hooks/useApiConfig';
+import { cn } from '@/lib/utils';
+import type { ServerStatsResponse } from '@/types/api';
 
 /** Uptime Kuma 的单条心跳 */
 type Heartbeat = {
@@ -127,10 +131,35 @@ function ServiceCard({ serviceId, beats }: { serviceId: string; beats: Heartbeat
   );
 }
 
+/** 社区数据的小格子：数值 + 标签 */
+function CommunityTile({
+  icon: Icon,
+  label,
+  value,
+  accent,
+}: {
+  icon: typeof Activity;
+  label: string;
+  value: number | string;
+  accent?: string;
+}) {
+  return (
+    <div className="rounded-lg border bg-card p-3">
+      <div className={cn('flex items-center gap-1 text-xs text-muted-foreground')}>
+        <Icon className="h-3.5 w-3.5 shrink-0" />
+        <span className="truncate">{label}</span>
+      </div>
+      <div className={cn('mt-1 text-xl font-semibold leading-tight', accent)}>{value}</div>
+    </div>
+  );
+}
+
 export function StatusPanel() {
   const [heartbeats, setHeartbeats] = useState<Record<string, Heartbeat[]> | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [stats, setStats] = useState<ServerStatsResponse | null>(null);
+  const [statsError, setStatsError] = useState('');
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -154,9 +183,29 @@ export function StatusPanel() {
     }
   }, []);
 
+  // 社区数据来自自建服务端（不依赖 Uptime Kuma，单独失败不影响状态格子）
+  const loadStats = useCallback(async () => {
+    setStatsError('');
+    try {
+      if (!apiService.getBaseUrl()) applyApiConfig();
+      const data = await apiService.getServerStats();
+      if (!data?.ok) throw new Error('服务端返回异常');
+      setStats(data);
+    } catch (e) {
+      setStats(null);
+      setStatsError(e instanceof Error ? e.message : '无法加载社区数据');
+    }
+  }, []);
+
   useEffect(() => {
     void load();
-  }, [load]);
+    void loadStats();
+  }, [load, loadStats]);
+
+  const refreshAll = () => {
+    void load();
+    void loadStats();
+  };
 
   const serviceIds = heartbeats ? Object.keys(heartbeats) : [];
 
@@ -164,22 +213,73 @@ export function StatusPanel() {
     <div className="flex flex-1 flex-col space-y-4 animate-fade-in">
       <Card className="flex flex-1 flex-col">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
+          <CardTitle className="flex flex-wrap items-center gap-2">
             <Activity className="h-5 w-5" />
             服务器状态
-          </CardTitle>
-          <CardDescription className="flex flex-wrap items-center gap-2">
-            基于 Uptime Kuma 的监控数据，每个格子代表一次探测（绿=在线 / 黄=降级 / 红=离线）
             <div className="ml-auto flex items-center gap-2">
-              <Button size="sm" variant="outline" onClick={() => void load()} disabled={loading}>
+              <Button size="sm" variant="outline" onClick={refreshAll} disabled={loading}>
                 <RefreshCw className={`mr-2 h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
                 刷新
               </Button>
             </div>
-          </CardDescription>
+          </CardTitle>
         </CardHeader>
 
         <CardContent className="flex flex-1 flex-col space-y-4">
+          {/* 社区数据：服务器天数 / 账号数 / 今日连接 / 在线与房间 */}
+          {statsError && (
+            <div className="rounded-lg border border-destructive/30 bg-destructive/10 p-3 text-sm text-destructive">
+              社区数据加载失败：{statsError}
+            </div>
+          )}
+
+          {stats && (
+            <>
+              <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
+                <CommunityTile icon={CalendarDays} label="服务器天数" value={`第 ${stats.serverDay} 天`} />
+                <CommunityTile icon={Users} label="累计账号" value={stats.totalAccounts} />
+                <CommunityTile icon={Activity} label="今日连接" value={stats.todayConnections} />
+                <CommunityTile icon={Users} label="今日新账号" value={stats.todayNewAccounts} />
+                <CommunityTile icon={Users} label="当前在线" value={stats.onlineUsers} accent="text-green-600" />
+                <CommunityTile icon={MessagesSquare} label="当前房间" value={stats.rooms} />
+              </div>
+
+              {/* 每日一句 */}
+              <div className="rounded-lg border border-primary/20 bg-primary/5 p-4">
+                <div className="flex items-center gap-2 text-xs font-medium text-primary">
+                  <Quote className="h-3.5 w-3.5" />
+                  今天的一句话
+                </div>
+                <p className="mt-2 text-base leading-relaxed">{stats.dailyQuote.quote}</p>
+                <p className="mt-1 text-right text-xs text-muted-foreground">—— {stats.dailyQuote.from}</p>
+              </div>
+
+              {/* 今日数字看板：只统计特征，不展示任何房间名原文 */}
+              <div className="rounded-lg border p-4">
+                <div className="text-xs font-medium text-muted-foreground">今日数字看板</div>
+                <div className="mt-2 flex flex-wrap gap-x-6 gap-y-2 text-sm">
+                  <span>
+                    今天开了 <strong className="text-primary">{stats.roomStats.created}</strong> 个房间
+                  </span>
+                  <span>
+                    最长的房间名 <strong className="text-primary">{stats.roomStats.maxNameLength}</strong> 个字符
+                  </span>
+                  <span>
+                    <strong className="text-primary">{(stats.roomStats.digitRatio * 100).toFixed(0)}%</strong>{' '}
+                    的房间名含数字
+                  </span>
+                  {Object.entries(stats.roomStats.easter)
+                    .filter(([, n]) => n > 0)
+                    .map(([name, n]) => (
+                      <span key={name}>
+                        有 <strong className="text-primary">{n}</strong> 个房间叫「{name}」
+                      </span>
+                    ))}
+                </div>
+              </div>
+            </>
+          )}
+
           {error && (
             <div className="rounded-lg border border-destructive/30 bg-destructive/10 p-3 text-sm text-destructive">
               {error}
