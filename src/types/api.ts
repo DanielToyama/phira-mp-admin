@@ -121,7 +121,7 @@ export interface ServerStatsResponse {
     digitRatio: number;
     easter: Record<string, number>;
   };
-  dailyQuote: DailyQuote;
+  quote: DailyQuote;
 }
 
 export interface UserInfo {

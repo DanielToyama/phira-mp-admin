@@ -244,14 +244,13 @@ export function StatusPanel() {
                 <CommunityTile icon={MessagesSquare} label="当前房间" value={stats.rooms} />
               </div>
 
-              {/* 每日一句 */}
+              {/* 一言：每次加载随机一条 */}
               <div className="rounded-lg border border-primary/20 bg-primary/5 p-4">
                 <div className="flex items-center gap-2 text-xs font-medium text-primary">
                   <Quote className="h-3.5 w-3.5" />
-                  今天的一句话
+                  一言
                 </div>
-                <p className="mt-2 text-base leading-relaxed">{stats.dailyQuote.quote}</p>
-                <p className="mt-1 text-right text-xs text-muted-foreground">—— {stats.dailyQuote.from}</p>
+                <p className="mt-2 text-base leading-relaxed">「{stats.quote.quote}」</p>
               </div>
 
               {/* 今日数字看板：只统计特征，不展示任何房间名原文 */}
